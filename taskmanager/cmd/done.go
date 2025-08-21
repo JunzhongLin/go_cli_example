@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"strconv"
 )
 
 var doneCmd = &cobra.Command{
@@ -11,11 +12,19 @@ var doneCmd = &cobra.Command{
 	Long:  `Mark a specific task as done by its ID.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("Please provide a task ID.")
+		index, err := strconv.Atoi(args[0])
+
+		if err != nil || index < 1 {
+			fmt.Println("Invalid task ID.")
 			return
 		}
-		taskID := args[0]
-		markTaskAsDone(taskID)
+		tasks := loadTasks()
+		if index > len(tasks) {
+			fmt.Printf("Task with ID %d does not exist.\n", index)
+			return
+		}
+		tasks[index-1].Done = true
+		saveTasks(tasks)
+		fmt.Printf("Task with ID %d marked as done.\n", index)
 	},
 }
