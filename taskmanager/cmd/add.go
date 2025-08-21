@@ -29,13 +29,13 @@ var addCmd = &cobra.Command{
 
 func loadTasks() []Task {
 	file, err := os.Open("tasks.json")
-	defer file.Close()
+	
 	if os.IsNotExist(err) {
 		return []Task{} // Return an empty slice if the file does not exist
 	} else if err != nil {
 		panic(err)
 	}
-
+	defer file.Close()
 	var tasks []Task
 	json.NewDecoder(file).Decode(&tasks)
 	return tasks
